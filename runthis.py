@@ -1,3 +1,4 @@
+import glob
 import numpy as np
 import scipy
 import matplotlib
@@ -41,8 +42,6 @@ def return_corr_function(filename, numcol):
 
 def correlation(t, g0, tauD, bl):
     return g0/((1+t/tauD)*(1+0.01*t/tauD)**(0.5))+bl
-
-# Read this http://www.scipy-lectures.org/intro/numpy/index.html
 
 
 def fit_model(t, y):
@@ -104,10 +103,15 @@ def analyse_data(filename, numcol, lowlimit=1e-5, highlimit=1):
     plot_corrcurve1(t=useful_t, y_list=useful_y_list,
                     result_list=fitted_y_list)
 
-    exit()
-
     for y, result in zip(useful_y_list, fitted_y_list):
         plot_corrcurve(useful_t, y, result)
 
 
-analyse_data("exampledata/rb.sin", numcol=5)
+def find_files(keyword="./*.sin"):
+    return sorted(glob.glob(keyword))
+
+
+if __name__ == "__main__":
+    file_list = find_files("./*.sin")
+    for file in file_list:
+        analyse_data(file, numcol=5)
