@@ -2,3 +2,4 @@
 *.pyc
 plots/
 tests/
+*egg-info/
