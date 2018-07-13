@@ -109,9 +109,3 @@ def analyse_data(filename, numcol, lowlimit=1e-5, highlimit=1):
 
 def find_files(keyword="./*.sin"):
     return sorted(glob.glob(keyword))
-
-
-if __name__ == "__main__":
-    file_list = find_files("./*.sin")
-    for file in file_list:
-        analyse_data(file, numcol=5)
