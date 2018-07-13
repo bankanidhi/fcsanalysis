@@ -7,6 +7,7 @@ from scipy.optimize import curve_fit
 from lmfit import Model
 matplotlib.style.use("seaborn-colorblind")
 
+
 def return_corr_function(filename, numcol):
     """This function opens ascii files and reads the correlation function raw
     data.
@@ -16,19 +17,22 @@ def return_corr_function(filename, numcol):
     filename : str
         The ascii file that has fcs data.
 
-        numcol : int
-                Number of columns including x.
+    numcol : int
+        Number of columns including x.
 
-        Returns
-        -------
-
-    """  # opening the file as ascii as ascii_file
+    Returns
+    -------
+    reshaped : ndarray
+        An array with the first dimension as time and the other dimensions
+        have the y-data.
+    """
+    # open the file as ascii as ascii_file
     with open(filename, "r") as ascii_file:
-        # reading the opened ascii_file to an array ascii_file_data
+        # read the opened ascii_file to an array ascii_file_data
         ascii_file_data = ascii_file.read()
-        # slicing the data as useful_data
+        # slicing the useful text from the raw data as useful_data
         useful_data = ascii_file_data[244:18963]
-        # conversion to an 1D array
+        # conversion of the ascii data to numpy array
         array_data = np.fromstring(useful_data, sep="\t")
         reshaped = array_data.reshape(
             int(len(array_data)/numcol), numcol)  # reshaped as 2D array
