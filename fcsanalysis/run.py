@@ -21,4 +21,4 @@ def run():
     # The actually analysis happens after this.
     else:
         for file in file_list:
-            analyse_data(file, int(options.numcol))
+            analyse_data(file)

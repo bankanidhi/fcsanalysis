@@ -9,7 +9,7 @@ from lmfit import Model
 matplotlib.style.use("seaborn-colorblind")
 
 
-def return_corr_function(filename, numcol):
+def return_corr_function_data(filename):
     """This function opens ascii files and reads the correlation function raw
     data.
 
@@ -17,9 +17,6 @@ def return_corr_function(filename, numcol):
     ----------
     filename : str
         The ascii file that has fcs data.
-
-    numcol : int
-        Number of columns including x.
 
     Returns
     -------
@@ -33,11 +30,24 @@ def return_corr_function(filename, numcol):
         ascii_file_data = ascii_file.read()
         # slicing the useful text from the raw data as useful_data
         useful_data = ascii_file_data[244:18963]
+
+        # Find the number of columns in the data
+        numcol = find_numcol(useful_data)
+
         # conversion of the ascii data to numpy array
         array_data = np.fromstring(useful_data, sep="\t")
+
         reshaped = array_data.reshape(
             int(len(array_data)/numcol), numcol)  # reshaped as 2D array
-        return reshaped
+
+        # Returning transposed matrix for easy iteration
+        return reshaped.T
+
+
+def find_numcol(raw_text):
+    first_line = raw_text.split("\n")[0]
+    cols = first_line.split("\t")
+    return len(cols)
 
 
 def correlation(t, g0, tauD, bl):
@@ -80,25 +90,19 @@ def plot_corrcurve1(t, y_list, result_list):
     return
 
 
-def analyse_data(filename, numcol, lowlimit=1e-5, highlimit=1):
-    reshaped = return_corr_function(filename=filename, numcol=numcol)
-    t = reshaped[:, 0]
-
-    y_list = []
-    for i in range(numcol-1):
-        y_list.append(reshaped[:, i+1])
+def analyse_data(filename, lowlimit=1e-5, highlimit=1):
+    corr_data = return_corr_function_data(filename=filename)
+    t = corr_data[0]
 
     mask = (t > lowlimit) * (t < highlimit)
 
+    # Limit the time axis in the raw data
     useful_t = t[mask]
 
-    useful_y_list = []
-    for y in y_list:
-        useful_y_list.append(y[mask])
+    # Apply the same mask on all the y data
+    useful_y_list = [y[mask] for y in corr_data[1:]]
 
-    fitted_y_list = []
-    for y in useful_y_list:
-        fitted_y_list.append(fit_model(useful_t, y))
+    fitted_y_list = [fit_model(useful_t, y) for y in useful_y_list]
 
     plot_corrcurve1(t=useful_t, y_list=useful_y_list,
                     result_list=fitted_y_list)
