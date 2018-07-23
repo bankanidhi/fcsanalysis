@@ -16,4 +16,4 @@ def run():
         exit()
     else:
         for file in file_list:
-            analyse_data(file, numcol=5)
+            analyse_data(file, int(options.numcol))

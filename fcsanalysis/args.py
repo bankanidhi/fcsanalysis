@@ -14,5 +14,8 @@ def arguments():
                         help="Show files that are to be opened,\
                         without opening them.",
                         action="store_true")
+    parser.add_argument("-numcol",
+                        help="Number of columns in the text file.",
+                        default=5)
     args = parser.parse_args()
     return args
